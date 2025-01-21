@@ -47,17 +47,25 @@ export const constantRoutes = [
     ]
   },
   {
-    path: 'rule',
-    component: () => import('@/views/alarm/rule/index'),
-    name: 'AlarmRule',
-    meta: { title: '告警规则', icon: 'bell' }
-  },
-  {
-    path: 'rule/detail/:id',
-    component: () => import('@/views/alarm/rule/detail'),
-    name: 'AlarmRuleDetail',
-    meta: { title: '告警规则详情', activeMenu: '/alarm/rule' },
-    hidden: true
+    path: '/alarm',
+    component: Layout,
+    redirect: '/alarm/rule',
+    meta: { title: '告警管理', icon: 'Bell' },
+    children: [
+      {
+        path: 'rule',
+        name: 'AlarmRule',
+        component: () => import('@/views/alarm/rule/index.vue'),
+        meta: { title: '告警规则', icon: 'Bell' }
+      },
+      {
+        path: 'rule/detail/:id',
+        component: () => import('@/views/alarm/rule/detail.vue'),
+        name: 'AlarmRuleDetail',
+        meta: { title: '告警规则详情', activeMenu: '/alarm/rule' },
+        hidden: true
+      }
+    ]
   }
 ]
 
