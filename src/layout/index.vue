@@ -3,18 +3,17 @@
     <!-- 侧边栏 -->
     <div class="sidebar-container">
       <div class="logo-container">
-        <img src="@/assets/logo.png" alt="Logo" class="logo">
-        <h1 class="title">农业物联网平台</h1>
+        <h1 class="logo-title">农业物联网</h1>
       </div>
       <el-menu
         :default-active="route.path"
-        class="sidebar-menu"
-        :collapse="isCollapse"
+        :unique-opened="true"
+        :collapse="false"
         background-color="#304156"
         text-color="#bfcbd9"
         active-text-color="#409EFF"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path"/>
       </el-menu>
     </div>
 
@@ -22,22 +21,17 @@
     <div class="main-container">
       <!-- 顶部导航栏 -->
       <div class="navbar">
-        <div class="left">
-          <el-icon class="fold-btn" @click="toggleSidebar">
-            <component :is="isCollapse ? 'Expand' : 'Fold'" />
-          </el-icon>
-          <breadcrumb />
-        </div>
-        <div class="right">
+        <breadcrumb class="breadcrumb-container"/>
+        <div class="right-menu">
           <el-dropdown trigger="click">
-            <div class="avatar-container">
-              <el-avatar :size="32" :src="userStore.avatar" />
-              <span class="username">{{ userStore.name }}</span>
+            <div class="avatar-wrapper">
+              <el-avatar :size="40" icon="UserFilled"/>
+              <span class="user-name">{{ userName }}</span>
+              <el-icon><CaretBottom /></el-icon>
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item @click="handleProfile">个人信息</el-dropdown-item>
-                <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
+                <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -57,27 +51,25 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store/user'
 import { constantRoutes } from '@/router'
 import SidebarItem from './components/SidebarItem.vue'
 import Breadcrumb from './components/Breadcrumb.vue'
+import { CaretBottom } from '@element-plus/icons-vue'
 
-const route = useRoute()
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 
-const isCollapse = ref(false)
-const routes = computed(() => constantRoutes)
+const routes = computed(() => {
+  return constantRoutes.filter(route => !route.hidden)
+})
 
-const toggleSidebar = () => {
-  isCollapse.value = !isCollapse.value
-}
-
-const handleProfile = () => {
-  router.push('/profile')
-}
+const userName = computed(() => {
+  return userStore.name || '管理员'
+})
 
 const handleLogout = async () => {
   await userStore.logout()
@@ -93,81 +85,55 @@ const handleLogout = async () => {
   .sidebar-container {
     width: 210px;
     height: 100%;
-    background-color: #304156;
-    transition: width 0.3s;
-    overflow-x: hidden;
-
-    &.is-collapse {
-      width: 64px;
-    }
+    background: #304156;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto;
 
     .logo-container {
       height: 50px;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      background: #2b2f3a;
-
-      .logo {
-        width: 32px;
-        height: 32px;
-        margin-right: 10px;
-      }
-
-      .title {
+      padding: 10px 0;
+      text-align: center;
+      
+      .logo-title {
         color: #fff;
-        font-size: 16px;
-        font-weight: 600;
-        white-space: nowrap;
+        font-size: 18px;
+        margin: 0;
+        line-height: 30px;
       }
-    }
-
-    .sidebar-menu {
-      border: none;
     }
   }
 
   .main-container {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
+    margin-left: 210px;
+    position: relative;
+    
     .navbar {
       height: 50px;
-      padding: 0 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background-color: #fff;
-      box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-
-      .left {
-        display: flex;
-        align-items: center;
-
-        .fold-btn {
-          padding: 0 15px;
-          font-size: 20px;
-          cursor: pointer;
-          transition: color 0.3s;
-
-          &:hover {
-            color: #409EFF;
-          }
-        }
+      padding: 0 15px;
+      box-shadow: 0 1px 4px rgba(0,21,41,.08);
+      
+      .breadcrumb-container {
+        float: left;
       }
-
-      .right {
-        .avatar-container {
+      
+      .right-menu {
+        float: right;
+        
+        .avatar-wrapper {
           display: flex;
           align-items: center;
-          padding: 0 8px;
           cursor: pointer;
-
-          .username {
-            margin-left: 8px;
-            font-size: 14px;
+          
+          .user-name {
+            margin: 0 5px;
+            color: #333;
           }
         }
       }
