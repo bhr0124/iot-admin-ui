@@ -15,7 +15,9 @@
     "element-plus": "^2.3.9",
     "@element-plus/icons-vue": "^2.1.0",
     "js-cookie": "^3.0.5",
-    "echarts": "^5.4.3"
+    "echarts": "^5.4.3",
+    "path-browserify": "^1.0.1",
+    "normalize.css": "^8.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
